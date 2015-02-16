@@ -41,7 +41,6 @@ Mojang.API.authenticate = function(username, password, agent) {
             }
         });
     } catch (e) {
-        console.log(e);
         response = buildResponseFromError(e);
     } finally {
         return response;
