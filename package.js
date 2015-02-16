@@ -2,7 +2,7 @@ Package.describe({
   name: 'lutangar:mojang-api',
   version: '0.0.1',
   summary: 'Integrate the Mojang API',
-  git: '',
+  git: 'https://github.com/lutangar/mojang-api.git',
   documentation: 'README.md'
 });
 
