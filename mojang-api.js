@@ -40,6 +40,7 @@ Mojang.API.authenticate = function(username, password, agent) {
                 "clientToken": Meteor.uuid()
             }
         });
+        response = JSON.parse(response.content);
     } catch (e) {
         response = buildResponseFromError(e);
     } finally {
@@ -70,6 +71,7 @@ Mojang.API.refresh = function(accessToken, clientToken, profile)
                 selectedProfile: profile
             }
         });
+        response = JSON.parse(response.content);
     } catch (e) {
         response = buildResponseFromError(e);
     } finally {
@@ -100,6 +102,7 @@ Mojang.API.validate = function(accessToken)
                 accessToken: accessToken
             }
         });
+        response = JSON.parse(response.content);
     } catch (e) {
         response = buildResponseFromError(e);
     } finally {
@@ -125,6 +128,7 @@ Mojang.API.signOut = function(username, password)
                 password: password
             }
         });
+        response = JSON.parse(response.content);
     } catch (e) {
         response = buildResponseFromError(e);
     } finally {
@@ -150,6 +154,7 @@ Mojang.API.invalidate = function(accessToken, clientToken)
                 clientToken: clientToken
             }
         });
+        response = JSON.parse(response.content);
     } catch (e) {
         response = buildResponseFromError(e);
     } finally {
