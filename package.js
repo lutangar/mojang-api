@@ -1,6 +1,6 @@
 Package.describe({
   name: 'lutangar:mojang-api',
-  version: '0.0.2',
+  version: '0.0.3',
   summary: 'Integrates the Mojang authentication API server-side',
   git: 'https://github.com/lutangar/mojang-api.git',
   documentation: 'README.md'
