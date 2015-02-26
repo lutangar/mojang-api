@@ -1,6 +1,8 @@
 Mojang = {};
 Mojang.API = {};
-Mojang.API.BaseURL = 'https://authserver.mojang.com/';
+Mojang.API.BaseURL = 'https://api.mojang.com/';
+Mojang.API.Authentication = {};
+Mojang.API.Authentication.BaseURL = 'https://authserver.mojang.com/';
 
 /**
  * Authenticates a user using his password.
@@ -30,7 +32,7 @@ Mojang.API.authenticate = function(username, password, agent) {
     agent = agent || {};
 
     try {
-        var response = Meteor.http.post(Mojang.API.BaseURL + 'authenticate', {
+        var response = Meteor.http.post(Mojang.API.Authentication.BaseURL + 'authenticate', {
             headers: {
                 "Accept": 'application/json'
             }, data: {
@@ -62,7 +64,7 @@ Mojang.API.refresh = function(accessToken, clientToken, profile)
     profile = profile || {};
 
     try {
-        var response = Meteor.http.post(Mojang.API.BaseURL + 'refresh', {
+        var response = Meteor.http.post(Mojang.API.Authentication.BaseURL + 'refresh', {
             headers: {
                 Accept: 'application/json'
             }, data: {
@@ -146,12 +148,47 @@ Mojang.API.signOut = function(username, password)
 Mojang.API.invalidate = function(accessToken, clientToken)
 {
     try {
-        var response = Meteor.http.post(Mojang.API.BaseURL + 'refresh', {
+        var response = Meteor.http.post(Mojang.API.Authentication.BaseURL + 'refresh', {
             headers: {
                 Accept: 'application/json'
             }, data: {
                 accessToken: accessToken,
                 clientToken: clientToken
+            }
+        });
+        response = JSON.parse(response.content);
+    } catch (e) {
+        response = buildResponseFromError(e);
+    } finally {
+        return response;
+    }
+};
+
+/**
+ * Get UUID of a user for the given agent at the given time
+ *
+ * @param {String} agent the name of the game
+ * @param {String} username
+ * @param {Integer} at a timestamp default to now
+ * @returns {Object}
+ */
+Mojang.API.getUUID = function(agent, username, at)
+{
+    at = at || Date.now();
+
+    check(agent, Match.OneOf('minecraft'));
+    check(username, Match.Where(function (username) {
+        check(username, String);
+        return username.length >= 6;
+    }));
+    check(at, Match.Where(function (timestamp) {
+        return (new Date(timestamp)).getTime() > 0;
+    }));
+
+    try {
+        var response = Meteor.http.get(Mojang.API.BaseURL + 'users/profiles/' + agent + '/' + username + '?at' + at, {
+            headers: {
+                Accept: 'application/json'
             }
         });
         response = JSON.parse(response.content);
