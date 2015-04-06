@@ -191,7 +191,16 @@ Mojang.API.getUUID = function(agent, username, at)
                 Accept: 'application/json'
             }
         });
-        response = JSON.parse(response.content);
+
+        if (response.content.length > 0) {
+            response = JSON.parse(response.content);
+
+            if (response.id) {
+                response.id = formatUUID(response.id);
+            }
+        } else {
+            response = { error: 'NotFound', errorMessage: 'user not found' };
+        }
     } catch (e) {
         response = buildResponseFromError(e);
     } finally {
@@ -224,4 +233,25 @@ var buildResponseFromError = function (e) {
     }
 
     return response;
+};
+
+/**
+ * '2d4a2b4d898749c388fceb151d624d04'
+ * ->
+ * '2d4a2b4d-8987-49c3-88fc-eb151d624d04'
+ *
+ * @param {String} unformattedUUID
+ * @returns {String}
+ */
+var formatUUID = function (unformattedUUID)
+{
+    var patterns = [8, 4, 4, 4, 12], uuidParts = [], i = 0, start = 0;
+
+    for (i; i < patterns.length; i++) {
+        uuidParts.push(unformattedUUID.substr(start, patterns[i]));
+
+        start += patterns[i];
+    }
+
+    return uuidParts.join('-');
 };
